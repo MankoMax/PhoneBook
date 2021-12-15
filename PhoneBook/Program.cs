@@ -13,7 +13,6 @@ public static class Program
 
         while (true)
         {
-
             Console.Clear();
             Console.WriteLine("1 - Add new number");
             Console.WriteLine("2 - Delete one of the numbers");
