@@ -176,54 +176,9 @@ public static class Program
 
                     Console.Clear();
 
-                    if (numbers.Count > 0)
-                    {
-                        var isExceptionOccured = false;
+                    DeleteNumberWithValidations(numbers);
 
-                        do
-                        {
-                            try
-                            {
-                                Console.Clear();
-
-                                Console.WriteLine("Which of the numbers should you edit?: \n");
-
-                                PrintNumbersList(numbers);
-
-                                Console.WriteLine("\nEnter the sequence number: > ");
-
-                                var index = int.Parse(Console.ReadLine());
-
-                                numbers.RemoveAt(index - 1);
-
-                                AddNumberWithValidations(numbers);
-
-                                break;
-
-
-                                isExceptionOccured = false;
-
-                            }
-                            catch
-                            {
-                                isExceptionOccured = true;
-
-                                Console.Clear();
-
-                                Console.WriteLine("Invalid input!\n\nDo you want to continue y/n?");
-
-                                inputYN = Console.ReadLine();
-                            }
-                        }
-                        while (isExceptionOccured && inputYN == "y");
-
-                    }
-                    else
-                    {
-                        Console.WriteLine("There are no numbers!");
-
-                        Console.ReadKey();
-                    }
+                    AddNumberWithValidations(numbers);
 
                     break;
 
