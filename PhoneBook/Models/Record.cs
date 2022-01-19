@@ -1,14 +1,35 @@
-﻿namespace PhoneBook
+﻿using System.Text.RegularExpressions;
+
+namespace PhoneBook
 {
     public class Record
     {
-        public string _number;
-        public string _name;
+        private string _number;
+
+        public string Number
+        {
+            get
+            {
+                return _number;
+            }
+            set
+            {
+                var regEx = new Regex(" *[\\~#%&*{}()/:<>?|\"-]+ *");
+                _number = regEx.Replace(value, string.Empty);
+            }
+        }
+
+        public string Name { get; set; }
 
         public Record(string number, string name)
         {
-            _number = number;
-            _name = name;
+            Name = name;
+            Number = number;
+        }
+
+        public override string ToString()
+        {
+            return $"Name: {Name}; \n   Number: {Number}\n";
         }
     }
 }
