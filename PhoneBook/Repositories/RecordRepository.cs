@@ -121,7 +121,5 @@ namespace PhoneBook.Repositories
                 Console.ReadKey();
             }
         }
-
-
     }
 }
