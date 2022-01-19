@@ -1,7 +1,7 @@
 ﻿using PhoneBook;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 public static class Program
@@ -17,22 +17,22 @@ public static class Program
             switch (ShowMenu())
             {
                 case "1":
-                    AddNumberWithValidations();
+                    AddNumber();
 
                     break;
 
                 case "2":
-                    DeleteNumberWithValidations();
+                    DeleteNumber();
 
                     break;
 
                 case "3":
-                    EditNumbers();
+                    EditNumber();
 
                     break;
 
                 case "4":
-                    PrintNumbersUsingCountCheck();
+                    TryToPrintNumbers();
 
                     Console.ReadKey();
 
@@ -51,7 +51,7 @@ public static class Program
         }
     }
 
-    public static bool Validate(string number, out string message)
+    public static bool ValidateNumber(string number, out string message)
     {
         if (number.Length != 9)
         {
@@ -95,14 +95,33 @@ public static class Program
         return GetDataFromUser("\nType the command and press Enter : > ");
     }
 
-    public static void EditNumbers()
+    public static void EditNumber()
     {
         Clear();
 
         if (_numbers.Count > 0)
         {
-            DeleteNumberWithValidations();
-            AddNumberWithValidations();
+            Console.Write("Which of the numbers should you delete?:\n");
+
+            PrintNumbers();
+
+            var index = int.Parse(GetDataFromUser("\nEnter the sequence number : > "));
+            var selectedNumber = _numbers.ElementAt(index - 1);
+            var name = GetDataFromUser("Enter the name: ", true);
+            var number = GetDataFromUser("\nEnter the number in the format ХХХ-ХХХ-ХХХ: ", true);
+            var numberWithoutSpecialChars = ReplaceSymbols(number);
+            var isNumberValid = ValidateNumber(numberWithoutSpecialChars, out var message);
+
+            if (isNumberValid)
+            {
+                selectedNumber._number = numberWithoutSpecialChars;
+                selectedNumber._name = name;
+            }
+            else
+            {
+                Console.WriteLine(message);
+                Console.ReadKey();
+            }
         }
         else
         {
@@ -137,10 +156,9 @@ public static class Program
         {
             Console.WriteLine($"{_numbers.IndexOf(number) + 1}) Name: {number._name}; \n  Number: {number._number}\n");
         }
-
     }
 
-    public static void PrintNumbersUsingCountCheck()
+    public static void TryToPrintNumbers()
     {
         Clear();
 
@@ -162,7 +180,7 @@ public static class Program
         return numberWithoutSpecialCharacters;
     }
 
-    public static void AddNumberWithValidations()
+    public static void AddNumber()
     {
         var inputYN = string.Empty;
 
@@ -174,7 +192,7 @@ public static class Program
             var number = GetDataFromUser("\nEnter the number in the format ХХХ-ХХХ-ХХХ: ", true);
             var numberWithoutSpecialChars = ReplaceSymbols(number);
             var record = new Record(numberWithoutSpecialChars, name);
-            var isNumberValid = Validate(numberWithoutSpecialChars, out var message);
+            var isNumberValid = ValidateNumber(numberWithoutSpecialChars, out var message);
 
             if (!isNumberValid)
             {
@@ -190,10 +208,9 @@ public static class Program
             }
         }
         while (inputYN == "y");
-
     }
 
-    public static void DeleteNumberWithValidations()
+    public static void DeleteNumber()
     {
         if (_numbers.Count > 0)
         {
@@ -201,7 +218,13 @@ public static class Program
 
             do
             {
-                var isDeleted = TryToDelete(_numbers, out var message);
+                Console.Write("Which of the numbers should you delete?:\n");
+
+                PrintNumbers();
+
+                var index = int.Parse(GetDataFromUser("\nEnter the sequence number : > "));
+
+                var isDeleted = TryToDelete(index, out var message);
 
                 if (isDeleted)
                 {
@@ -213,10 +236,8 @@ public static class Program
 
                     inputYN = GetDataFromUser("\n\nDo you want to continue y/n? : > ");
                 }
-
             }
             while (inputYN == "y");
-
         }
         else
         {
@@ -227,18 +248,12 @@ public static class Program
         }
     }
 
-    public static bool TryToDelete(List<Record> _numbers, out string message)
+    public static bool TryToDelete(int index, out string message)
     {
         Clear();
 
         try
         {
-            Console.Write("Which of the numbers should you delete?:\n");
-
-            PrintNumbers();
-
-            var index = int.Parse(GetDataFromUser("\nEnter the sequence number : > "));
-
             _numbers.RemoveAt(index - 1);
 
             message = string.Empty;
